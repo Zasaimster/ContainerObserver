@@ -22,7 +22,7 @@ services:
     image: prom/prometheus
     container_name: prometheus
     volumes:
-      - ./prometheus-scraper.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/prometheus-scraper.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
 
@@ -35,8 +35,8 @@ services:
       GF_AUTH_DISABLE_SIGNOUT_MENU: "true"
       GF_AUTH_DISABLE_LOGIN_FORM: "true"
     volumes:
-      - ./grafana-datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
-      - ./grafana-dashboard.yml:/etc/grafana/provisioning/dashboards/default.yml
-      - ./dashboards:/var/lib/grafana/dashboards
+      - ./grafana/grafana-datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - ./grafana/grafana-dashboard.yml:/etc/grafana/provisioning/dashboards/default.yml
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
     ports:
       - "9100:3000"

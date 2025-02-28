@@ -1,24 +1,20 @@
 services:
   user_service:
     build: ./user_service
-    container_name: test
     ports:
       - "8001:8001"
   
   product_service:
     build: ./product_service
-    container_name: test2
     ports:
       - "8002:8002"
   
   order_service:
     build: ./order_service
-    container_name: test3
     ports:
       - "8003:8003"
 
   payment_service:
     build: ./payment_service
-    container_name: tes4
     ports:
       - "8004:8004"

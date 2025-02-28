@@ -1,0 +1,26 @@
+apiVersion: 1
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    uid: "PBFA97CFB590B2093"
+
+  # - name: Dist
+  #   type: mysql
+  #   orgId: 1
+  #   url: host.example.com:3306
+  #   database: dist
+  #   user: XXX
+  #   editable: false
+  #   version: 5
+  #   uid: "8rTXXfF4z"
+  #   secureJsonData:
+  #     password: YYYY
+  #   jsonData:
+  #     sslmode: 'disable'
+  #     maxOpenConns: 0
+  #     maxIdleConns: 2
+  #     connMaxLifetime: 14400
+  #     timescaledb: false
