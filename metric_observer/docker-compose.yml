@@ -1,0 +1,42 @@
+# use `docker compose` instead of `docker-compose`
+
+services:
+  cadvisor:
+      image: gcr.io/cadvisor/cadvisor:v0.49.2
+      privileged: true
+      hostname: cadvisor
+      platform: linux/aarch64
+      devices:
+        - /dev/kmsg:/dev/kmsg
+      volumes:
+        - "/:/rootfs:ro"
+        # - "/var/run:/var/run:ro"
+        - "/var/run/docker.sock:/var/run/docker.sock:ro" # NOTE: this line is not a part of the docs but I needed this to run on mac
+        - "/sys:/sys:ro"
+        - "/var/lib/docker/:/var/lib/docker:ro"
+        - "/dev/disk/:/dev/disk:ro"
+      ports:
+        - "8080:8080"
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus-scraper.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana
+    environment: 
+      GF_SECURITY_DISABLE_INITIAL_ADMIN_CREATION: "true"
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+      GF_AUTH_DISABLE_SIGNOUT_MENU: "true"
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+    volumes:
+      - ./grafana-datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - ./grafana-dashboard.yml:/etc/grafana/provisioning/dashboards/default.yml
+      - ./dashboards:/var/lib/grafana/dashboards
+    ports:
+      - "9100:3000"
