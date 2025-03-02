@@ -15,7 +15,10 @@ orders_db = []
 
 @app.post("/order")
 def create_order(order: Order):
-    product = requests.get(f"http://localhost:8002/product/{order.product_id}").json()
+    print("getting product_service")
+    product = requests.get(
+        f"http://product_service:8002/product/{order.product_id}"
+    ).json()
 
     if product["stock"] < order.quantity:
         raise HTTPException(status_code=400, detail="Not enough stock available")

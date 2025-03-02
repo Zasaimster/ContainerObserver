@@ -522,7 +522,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "irate(container_network_receive_bytes_total{image!=\"\"}[5m])",
+              "expr": "sum(irate(container_network_receive_bytes_total{image!=\"\"}[5m])) by (name)",
               "intervalFactor": 2,
               "legendFormat": "{{name}}",
               "metric": "container_network_receive_bytes_total",
@@ -600,7 +600,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "irate(container_network_transmit_bytes_total{image!=\"\"}[5m])",
+              "expr": "sum(irate(container_network_transmit_bytes_total{image!=\"\"}[5m])) by (name)",
               "intervalFactor": 2,
               "legendFormat": "{{name}}",
               "refId": "A",
