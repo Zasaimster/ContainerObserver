@@ -23,5 +23,6 @@
 ## Running Load Tests (WIP)
 - In `./test` run:
   - `pip install locust`
-  - `locust`
-  - View the locust web app at `http://0.0.0.0:8089/`
+  - `locust -H localhost --users 100 --spawn-rate 1 --run-time 15m --headless `
+    - This will simulate 100 users (generating a new one every second).
+    - View API stats on the CLI and container metrics on Grafana
