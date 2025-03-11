@@ -17,7 +17,7 @@ orders_db = []
 def create_order(order: Order):
     print("getting product-service")
     product = requests.get(f"http://product-service:8002/product/{order.product_id}")
-    if product.return_code == 404:
+    if product.status_code == 404:
         raise HTTPException(status_code=404, detail="Product not found")
 
     product = product.json()
