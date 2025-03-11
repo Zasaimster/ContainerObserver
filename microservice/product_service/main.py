@@ -17,12 +17,13 @@ memory_consumer = []
 
 @app.post("/product")
 def create_product(product: Product):
+    if product.id in products_db:
+        raise HTTPException(status_code=400, detail="Product already exists")
+
     # consume 0.5MB memory for each created product
     large_data = {"data": "A" * 1024 * 512}
     memory_consumer.append(large_data)
 
-    if product.id in products_db:
-        raise HTTPException(status_code=400, detail="Product already exists")
     products_db[product.id] = product
     return {"message": "Product created successfully"}
 

@@ -1,10 +1,9 @@
 
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   name: cadvisor
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: cadvisor
@@ -37,6 +36,10 @@ spec:
             - name: dev-disk
               mountPath: /dev/disk
               readOnly: true
+          args:
+            - --profiling
+            - --housekeeping_interval=10s
+            # advtcp,app,cpu,cpuLoad,cpu_topology,cpuset,disk,diskIO,hugetlb,memory,memory_numa,network,oom_event,percpu,perf_event,process,referenced_memory,resctrl,sched,tcp,udp
       volumes:
         - name: rootfs
           hostPath:
