@@ -1,0 +1,183 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-config
+data:
+  grafana-dashboard.yml: |
+    apiVersion: 1
+    providers:
+      - name: Node Monitoring Dashboard
+        folder: Services
+        type: file
+        options:
+          path: /var/lib/grafana/dashboards
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasource-config
+data:
+  grafana-datasource.yml: |
+    # Paste the contents of microservice_app/metric_observer/grafana/grafana-datasource.yml here.
+    ## Example datasource config can be added here
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://prometheus:9090
+        isDefault: true
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+---
+# NOTE: for some reason adding the grafana.ini to bypass the authentication makes the dashboard not load in
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: grafana-config
+# data:
+#   grafana.ini: |
+#     [auth.anonymous]
+#     enabled = true
+#     org_role = Admin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+        - name: grafana
+          image: grafana/grafana:latest
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: dashboard-volume
+              mountPath: /etc/grafana/provisioning/dashboards
+            - name: datasource-volume
+              mountPath: /etc/grafana/provisioning/datasources
+            - name: dashboards-volume
+              mountPath: /var/lib/grafana/dashboards
+            # - name: grafana-config-volume # New volume mount for grafana.ini
+            #   mountPath: /etc/grafana/grafana.ini # Mount grafana.ini to the correct path
+            #   subPath: grafana.ini # Specify the file within the ConfigMap
+      volumes:
+        - name: dashboard-volume
+          configMap:
+            name: grafana-dashboard-config
+        - name: datasource-volume
+          configMap:
+            name: grafana-datasource-config
+        - name: dashboards-volume
+          configMap:
+            name: grafana-dashboards
+        # - name: grafana-config-volume # New volume for grafana.ini
+        #   configMap:
+        #     name: grafana-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3000
+      targetPort: 3000
+  selector:
+    app: grafana
+
+# ---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: grafana-pvc
+# spec:
+#   accessModes:
+#     - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: 1Gi
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   labels:
+#     app: grafana
+#   name: grafana
+# spec:
+#   selector:
+#     matchLabels:
+#       app: grafana
+#   template:
+#     metadata:
+#       labels:
+#         app: grafana
+#     spec:
+#       securityContext:
+#         fsGroup: 472
+#         supplementalGroups:
+#           - 0
+#       containers:
+#         - name: grafana
+#           image: grafana/grafana:latest
+#           imagePullPolicy: IfNotPresent
+#           ports:
+#             - containerPort: 3000
+#               name: http-grafana
+#               protocol: TCP
+#           readinessProbe:
+#             failureThreshold: 3
+#             httpGet:
+#               path: /robots.txt
+#               port: 3000
+#               scheme: HTTP
+#             initialDelaySeconds: 10
+#             periodSeconds: 30
+#             successThreshold: 1
+#             timeoutSeconds: 2
+#           livenessProbe:
+#             failureThreshold: 3
+#             initialDelaySeconds: 30
+#             periodSeconds: 10
+#             successThreshold: 1
+#             tcpSocket:
+#               port: 3000
+#             timeoutSeconds: 1
+#           resources:
+#             requests:
+#               cpu: 250m
+#               memory: 750Mi
+#           volumeMounts:
+#             - mountPath: /var/lib/grafana
+#               name: grafana-pv
+#       volumes:
+#         - name: grafana-pv
+#           persistentVolumeClaim:
+#             claimName: grafana-pvc
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: grafana
+# spec:
+#   ports:
+#     - port: 3000
+#       protocol: TCP
+#       targetPort: http-grafana
+#   selector:
+#     app: grafana
+#   sessionAffinity: None
+#   type: LoadBalancer

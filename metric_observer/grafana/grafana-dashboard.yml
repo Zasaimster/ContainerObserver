@@ -6,4 +6,3 @@ providers:
     type: file
     options:
       path: /var/lib/grafana/dashboards
-        # <path to dashboard definitions> # Default path for Linux is: /var/lib/grafana/dashboards

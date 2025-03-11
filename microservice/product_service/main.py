@@ -29,6 +29,7 @@ def create_product(product: Product):
 
 @app.get("/product/{product_id}")
 def get_product(product_id: int):
+    print(f"Products_db: {products_db}")
     if product_id not in products_db:
         raise HTTPException(status_code=404, detail="Product not found")
     return products_db[product_id]
