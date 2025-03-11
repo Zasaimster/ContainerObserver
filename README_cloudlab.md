@@ -1,4 +1,4 @@
-Starting communication between server and client nodes:
+### Starting communication between server and client nodes:
 
 Setting up each node
 
@@ -11,7 +11,7 @@ sudo su
 git clone ...
 
 
-Run microservice applications
+### Run microservice applications
 
 For each node except node-0
 
@@ -47,7 +47,7 @@ node-4 = 128.110.216.235
 
 
 
-Send communication from node-0
+### Send communication from node-0
 
 On node-0 cd into ./test
 
