@@ -4,8 +4,9 @@ from locust.runners import MasterRunner
 from uuid import uuid1
 import random
 import requests
+import os
 
-BASE_URL = "http://localhost"
+BASE_URL = os.getenv("BASE_URL", "http://localhost")
 USER_URL = f"{BASE_URL}:8001"
 PRODUCT_URL = f"{BASE_URL}:8002"
 PAYMENT_URL = f"{BASE_URL}:8003"
