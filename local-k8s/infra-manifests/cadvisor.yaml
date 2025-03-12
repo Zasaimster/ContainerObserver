@@ -14,7 +14,6 @@ spec:
     spec:
       containers:
         - name: cadvisor
-          # image: google/cadvisor:latest
           image: gcr.io/cadvisor/cadvisor:v0.49.2
           ports:
             - containerPort: 8080
@@ -41,7 +40,8 @@ spec:
             - --housekeeping_interval=10s
             - --docker_only=true
             - --disable_metrics=disk,percpu,sched,process
-            # advtcp,app,cpu,cpuLoad,cpu_topology,cpuset,disk,diskIO,hugetlb,memory,memory_numa,network,oom_event,percpu,perf_event,process,referenced_memory,resctrl,sched,tcp,udp
+            # All metrics: advtcp,app,cpu,cpuLoad,cpu_topology,cpuset,disk,diskIO,hugetlb,memory,memory_numa,network,oom_event,percpu,perf_event,process,referenced_memory,resctrl,sched,tcp,udp
+            # You want to disable as many irrelevant metrics as you can to reduce cAdvisor overhead
       volumes:
         - name: rootfs
           hostPath:

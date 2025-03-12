@@ -1,25 +1,25 @@
 services:
   user-service:
-    build: ./user_service
+    build: ../app/user_service
     networks:
       - backend
     ports:
       - "8001:8001"
   
   product-service:
-    build: ./product_service
+    build: ../app/product_service
     networks:
       - backend
     ports:
       - "8002:8002"
   payment-service:
-    build: ./payment_service
+    build: ../app/payment_service
     networks:
       - backend
     ports:
       - "8003:8003"  
   order-service:
-    build: ./order_service
+    build: ../app/order_service
     networks:
       - backend
     ports:
