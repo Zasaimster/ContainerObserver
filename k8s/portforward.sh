@@ -12,8 +12,9 @@ kubectl port-forward service/prometheus 9090:9090 &
 # Port-forward Grafana service: accessible at http://localhost:3000
 kubectl port-forward service/grafana 3000:3000 &
 # Port-forward cAdvisor service: accessible at http://localhost:8080
-kubectl port-forward service/cadvisor 8080:8080 &
-# kubectl port-forward service/kube-state-metrics 8081:8081 & 
+# kubectl port-forward service/cadvisor 8080:8080 &
+kubectl port-forward service/kube-state-metrics 8080:8080 -n kube-system & 
+kubectl port-forward service/kube-state-metrics 8081:8081 -n kube-system & 
 
 # Wait for all background jobs to finish
 wait

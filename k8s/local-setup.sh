@@ -39,3 +39,7 @@ echo "sudo ./k8s/portforward.sh"
 
 echo "To access grafana, use user:pass admin:admin"
 echo "Setup complete! You can now run your load tests with Locust"
+
+# helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+# helm repo update
+# helm install kube-state-metrics prometheus-community/kube-state-metrics -n kube-system
