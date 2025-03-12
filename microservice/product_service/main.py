@@ -1,7 +1,10 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+import random
 
 app = FastAPI()
+
+NUM_PRODUCTS = 1000
 
 
 class Product(BaseModel):
@@ -13,6 +16,26 @@ class Product(BaseModel):
 
 products_db = {}
 memory_consumer = []
+
+
+@app.on_event("startup")
+async def startup_event():
+    """
+    Populates the products_db with initial data when the application starts.
+    About 500MB worth of data
+    """
+    for i in range(NUM_PRODUCTS):
+        product = Product(
+            id=i,
+            name=f"product_{i}",
+            price=round(random.uniform(0.5, 250), 2),
+            stock=250,
+        )
+
+        products_db[product.id] = product
+
+    print(products_db)
+    print(len(products_db))
 
 
 @app.post("/product")

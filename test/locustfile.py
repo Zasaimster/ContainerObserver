@@ -1,9 +1,6 @@
-from xml.sax.handler import property_dom_node
 from locust import HttpUser, task, between, events
-from locust.runners import MasterRunner
 from uuid import uuid1
 import random
-import requests
 import os
 
 BASE_URL = os.getenv("BASE_URL", "http://localhost")
@@ -12,27 +9,27 @@ PRODUCT_URL = f"{BASE_URL}:8002"
 PAYMENT_URL = f"{BASE_URL}:8003"
 ORDER_URL = f"{BASE_URL}:8004"
 
-NUM_PRODUCTS = 1000
+NUM_PRODUCTS = 1000  # NOTE: if you update this value, make sure to change the value in microservice/product_service/main.py as well
 
 
-# Startup: make products, few thousand total
-@events.test_start.add_listener
-def on_test_start(environment, **kwargs):
-    print(environment.host)
-    for i in range(NUM_PRODUCTS):
-        product = {
-            "id": i,
-            "name": f"product_{i}",
-            "price": round(random.uniform(0.5, 250), 2),
-            "stock": 250,
-        }
-        res = requests.post(f"{PRODUCT_URL}/product", json=product)
+# # Startup: make products, few thousand total
+# @events.test_start.add_listener
+# def on_test_start(environment, **kwargs):
+#     print(environment.host)
+#     for i in range(NUM_PRODUCTS):
+#         product = {
+#             "id": i,
+#             "name": f"product_{i}",
+#             "price": round(random.uniform(0.5, 250), 2),
+#             "stock": 250,
+#         }
+#         res = requests.post(f"{PRODUCT_URL}/product", json=product)
 
-        if res.status_code == 200:
-            print(f"Successfully created product {i}: {product['name']}")
-        else:
-            print(f"Failed to create product {i}. Status code: {res.status_code}")
-            print(f"Response: {res.text}")
+#         if res.status_code == 200:
+#             print(f"Successfully created product {i}: {product['name']}")
+#         else:
+#             print(f"Failed to create product {i}. Status code: {res.status_code}")
+#             print(f"Response: {res.text}")
 
 
 # @events.init.add_listener
