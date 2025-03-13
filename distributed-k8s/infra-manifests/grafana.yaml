@@ -1,0 +1,100 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-config
+data:
+  grafana-dashboard.yml: |
+    apiVersion: 1
+    providers:
+      - name: Node Monitoring Dashboard
+        folder: Services
+        type: file
+        options:
+          path: /var/lib/grafana/dashboards
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasource-config
+data:
+  grafana-datasource.yml: |
+    # Paste the contents of microservice_app/metric_observer/grafana/grafana-datasource.yml here.
+    ## Example datasource config can be added here
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://prometheus:9090
+        isDefault: true
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+---
+# NOTE: for some reason adding the grafana.ini to bypass the authentication makes the dashboard not load in
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: grafana-config
+# data:
+#   grafana.ini: |
+#     [auth.anonymous]
+#     enabled = true
+#     org_role = Admin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+        - name: grafana
+          image: grafana/grafana:latest
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: dashboard-volume
+              mountPath: /etc/grafana/provisioning/dashboards
+            - name: datasource-volume
+              mountPath: /etc/grafana/provisioning/datasources
+            - name: dashboards-volume
+              mountPath: /var/lib/grafana/dashboards
+            # - name: grafana-config-volume # New volume mount for grafana.ini
+            #   mountPath: /etc/grafana/grafana.ini # Mount grafana.ini to the correct path
+            #   subPath: grafana.ini # Specify the file within the ConfigMap
+      volumes:
+        - name: dashboard-volume
+          configMap:
+            name: grafana-dashboard-config
+        - name: datasource-volume
+          configMap:
+            name: grafana-datasource-config
+        - name: dashboards-volume
+          configMap:
+            name: grafana-dashboards
+        # - name: grafana-config-volume # New volume for grafana.ini
+        #   configMap:
+        #     name: grafana-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 3000
+      targetPort: 3000
+  selector:
+    app: grafana

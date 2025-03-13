@@ -33,6 +33,8 @@ async def startup_event():
         )
 
         products_db[product.id] = product
+        large_data = {"data": "A" * 1024 * 512}
+        memory_consumer.append(large_data)
 
     print(products_db)
     print(len(products_db))
@@ -53,7 +55,6 @@ def create_product(product: Product):
 
 @app.get("/product/{product_id}")
 def get_product(product_id: int):
-    print(f"Products_db: {products_db}")
     if product_id not in products_db:
         raise HTTPException(status_code=404, detail="Product not found")
     return products_db[product_id]
