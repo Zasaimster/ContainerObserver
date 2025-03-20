@@ -1,0 +1,12 @@
+[project]
+name = "containerobserver"
+version = "0.1.0"
+description = "Kubernetes metrics collector with Alibaba trace format export"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "locust>=2.33.1",
+    "prometheus-api-client",
+    "pandas",
+    "numpy",
+]
